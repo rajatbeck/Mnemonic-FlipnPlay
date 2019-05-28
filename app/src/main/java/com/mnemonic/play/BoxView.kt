@@ -83,7 +83,11 @@ class BoxView : View {
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        setMeasuredDimension(widthMeasureSpec, heightMeasureSpec)
+        if(measuredWidth<measuredHeight) {
+            setMeasuredDimension(measuredWidth, measuredWidth)
+        }else{
+            setMeasuredDimension(measuredHeight, measuredHeight)
+        }
 
     }
 
@@ -104,10 +108,6 @@ class BoxView : View {
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-        Log.d(
-            TAG,
-            "width " + width + " canvas width " + canvas?.width + "height " + height + " canvas height " + canvas?.height
-        )
         val rowWidth = width / row.toInt()
         val colHeight = height / col.toInt()
 
