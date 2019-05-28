@@ -14,7 +14,7 @@
            android:layout_marginBottom="64dp"
            android:layout_marginLeft="8dp"
            android:layout_marginRight="8dp"
-           app:square_color="@color/colorAccent"
+           app:square_color="@color/colorAliceBlue"
            app:row="4"
            app:column="4"
            android:layout_centerHorizontal="true"
