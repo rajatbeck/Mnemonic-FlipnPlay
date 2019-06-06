@@ -10,9 +10,11 @@ import android.view.View
 import android.os.Build
 import android.support.annotation.Nullable
 import android.support.annotation.RequiresApi
+import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.util.Log
 import com.mnemonic.play.extension.toDp
+import kotlin.random.Random
 
 
 class BoxView : View {
@@ -20,6 +22,7 @@ class BoxView : View {
     lateinit var paint: Paint
     lateinit var strokePaint: Paint
     lateinit var rectArr: Array<Array<Rect>>
+    lateinit var elementArr: Array<Array<Elements>>
     lateinit var color: ColorStateList
     lateinit var row: Number
     lateinit var col: Number
@@ -50,7 +53,7 @@ class BoxView : View {
         R.drawable.ic_train,
         R.drawable.ic_star,
         R.drawable.ic_world
-    )
+    ).shuffled()
 
     companion object {
         val TAG: String = BoxView::class.java.simpleName
@@ -92,6 +95,7 @@ class BoxView : View {
         col = ta.getInt(R.styleable.BoxView_column, 0)
 
         rectArr = Array(row.toInt()) { Array(col.toInt()) { Rect() } }
+        elementArr = Array(row.toInt()) { Array(col.toInt()) { Elements() } }
 
         paint = Paint()
         paint.color = color.defaultColor
@@ -109,6 +113,7 @@ class BoxView : View {
         super.onSizeChanged(w, h, oldw, oldh)
         val rowWidth = width / row.toInt()
         val colHeight = height / col.toInt()
+        assignImages(row.toInt(), col.toInt(), elementArr)
         captureRect(rowWidth, colHeight, rectArr, _captureRect)
     }
 
@@ -127,6 +132,26 @@ class BoxView : View {
         val rowWidth = width / row.toInt()
         val colHeight = height / col.toInt()
         drawRect(rowWidth, colHeight, canvas, _drawRect)
+    }
+
+    private fun assignImages(row: Int, col: Int, elmentArr: Array<Array<Elements>>) {
+        val n = (row * col) / 2
+        var pickedImageListOne = imageList.filterIndexed { index, i -> index < n }
+        var pickedImageListTwo = imageList.filterIndexed { index, i -> index < n }
+        for (i in 0 until row) {
+            for (j in 0 until col) {
+                if (pickedImageListOne.isNotEmpty()) {
+                    elementArr[i][j] = Elements(pickedImageListOne[0], false)
+                    pickedImageListOne = pickedImageListOne.filterIndexed { index, _ -> index != 0 }
+                    pickedImageListOne = pickedImageListOne.shuffled()
+                } else {
+                    elementArr[i][j] = Elements(pickedImageListTwo[0], false)
+                    pickedImageListTwo = pickedImageListTwo.filterIndexed { index, _ -> index != 0 }
+                    pickedImageListTwo = pickedImageListTwo.shuffled()
+                }
+            }
+        }
+
     }
 
 
@@ -162,9 +187,13 @@ class BoxView : View {
         for (i in 0 until row.toInt()) {
             x = 0F
             for (j in 0 until col.toInt()) {
+                val d = ContextCompat.getDrawable(context,elementArr[i][j].image)
+                d?.setBounds(rectArr[i][j].left+12, rectArr[i][j].top+12, rectArr[i][j].right-12, rectArr[i][j].bottom-12)
+                d?.draw(canvas)
                 canvas?.drawRect(x, y, x + rowWidth.toFloat(), y + colHeight.toFloat(), paint)
                 canvas?.drawRect(x, y, x + rowWidth.toFloat(), y + colHeight.toFloat(), strokePaint)
                 x = x.plus(rowWidth)
+
             }
             y = y.plus(colHeight)
         }
@@ -183,6 +212,8 @@ class BoxView : View {
         }
 
     }
+
+    data class Elements(val image: Int = -1, val flipped: Boolean = false)
 
 
 }
