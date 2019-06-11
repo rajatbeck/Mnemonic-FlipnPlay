@@ -5,6 +5,7 @@
     <color name="colorAccent">#8BC34A</color>
     <color name="colorTransparent">#00FFFFFF</color>
     <color name="colorAliceBlue">#00F0F8FF</color>
+    <color name="colorHighlighted">#558BC34A</color>
 
 
 </resources>

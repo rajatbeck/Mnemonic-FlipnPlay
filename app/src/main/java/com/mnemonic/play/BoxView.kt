@@ -13,6 +13,7 @@ import android.support.annotation.RequiresApi
 import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.util.Log
+import android.view.MotionEvent
 import com.mnemonic.play.extension.toDp
 import kotlin.random.Random
 
@@ -21,11 +22,14 @@ class BoxView : View {
 
     lateinit var paint: Paint
     lateinit var strokePaint: Paint
+    lateinit var highLightPaint:Paint
     lateinit var rectArr: Array<Array<Rect>>
     lateinit var elementArr: Array<Array<Elements>>
     lateinit var color: ColorStateList
     lateinit var row: Number
     lateinit var col: Number
+    var rectIndex = Pair(0, 0)
+    var touching: Boolean = false
 
 
     var imageList: List<Int> = arrayListOf(
@@ -106,6 +110,11 @@ class BoxView : View {
         strokePaint.style = Paint.Style.STROKE
         strokePaint.strokeWidth = 2F
 
+        highLightPaint = Paint()
+        highLightPaint.color = ContextCompat.getColor(context, R.color.colorAliceBlue)
+        highLightPaint.style = Paint.Style.FILL
+        highLightPaint.isAntiAlias = true
+
         ta.recycle()
     }
 
@@ -127,12 +136,39 @@ class BoxView : View {
 
     }
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        val x = event.x
+        val y = event.y
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                rectIndex = getClickedRectangle(x, y)
+                touching = true
+                invalidate(rectArr[rectIndex.first][rectIndex.second])
+            }
+            MotionEvent.ACTION_MOVE -> {
+
+            }
+            MotionEvent.ACTION_UP -> {
+                touching = false
+                invalidate(rectArr[rectIndex.first][rectIndex.second])
+            }
+            MotionEvent.ACTION_CANCEL -> {
+
+            }
+
+        }
+        return true
+    }
+
+    override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         val rowWidth = width / row.toInt()
         val colHeight = height / col.toInt()
         drawRect(rowWidth, colHeight, canvas, _drawRect)
+
     }
+
+
 
     private fun assignImages(row: Int, col: Int, elmentArr: Array<Array<Elements>>) {
         val n = (row * col) / 2
@@ -152,6 +188,16 @@ class BoxView : View {
             }
         }
 
+    }
+
+    private fun getClickedRectangle(x:Float,y:Float):Pair<Int,Int>{
+        rectArr.forEachIndexed { i, arrayOfRects ->
+            for((j,rect) in arrayOfRects.withIndex()){
+                if(rect.contains(x.toInt(),y.toInt()))
+                    return Pair(i,j)
+            }
+        }
+        return Pair(-1,-1)
     }
 
 
@@ -190,7 +236,11 @@ class BoxView : View {
                 val d = ContextCompat.getDrawable(context,elementArr[i][j].image)
                 d?.setBounds(rectArr[i][j].left+12, rectArr[i][j].top+12, rectArr[i][j].right-12, rectArr[i][j].bottom-12)
                 d?.draw(canvas)
-                canvas?.drawRect(x, y, x + rowWidth.toFloat(), y + colHeight.toFloat(), paint)
+                if(touching && rectIndex.first == i && rectIndex.second == j) {
+                    canvas?.drawRect(x, y, x + rowWidth.toFloat(), y + colHeight.toFloat(), highLightPaint)
+                }else{
+                    canvas?.drawRect(x, y, x + rowWidth.toFloat(), y + colHeight.toFloat(), paint)
+                }
                 canvas?.drawRect(x, y, x + rowWidth.toFloat(), y + colHeight.toFloat(), strokePaint)
                 x = x.plus(rowWidth)
 
