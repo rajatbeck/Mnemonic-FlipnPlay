@@ -22,7 +22,7 @@ class BoxView : View {
 
     lateinit var paint: Paint
     lateinit var strokePaint: Paint
-    lateinit var highLightPaint:Paint
+    lateinit var highLightPaint: Paint
     lateinit var rectArr: Array<Array<Rect>>
     lateinit var elementArr: Array<Array<Elements>>
     lateinit var color: ColorStateList
@@ -30,9 +30,12 @@ class BoxView : View {
     lateinit var col: Number
     var rectIndex = Pair(0, 0)
     var touching: Boolean = false
+    var lastTouched: Pair<Int, Int> = Pair(-1, -1)
+    var isMatch = false
+    var sameClick = false
 
 
-    var imageList: List<Int> = arrayListOf(
+    private var imageList: List<Int> = arrayListOf(
         R.drawable.ic_beach,
         R.drawable.ic_audio,
         R.drawable.ic_dollar,
@@ -143,6 +146,9 @@ class BoxView : View {
             MotionEvent.ACTION_DOWN -> {
                 rectIndex = getClickedRectangle(x, y)
                 touching = true
+                elementArr[rectIndex.first][rectIndex.second].flipped = true
+                if ((lastTouched.first != -1 && lastTouched.second != -1) && !(lastTouched.first == rectIndex.first && lastTouched.second == rectIndex.second) && !(elementArr[rectIndex.first][rectIndex.second].matchFound))
+                    checkLastClicked(lastTouched, rectIndex)
                 invalidate(rectArr[rectIndex.first][rectIndex.second])
             }
             MotionEvent.ACTION_MOVE -> {
@@ -150,7 +156,16 @@ class BoxView : View {
             }
             MotionEvent.ACTION_UP -> {
                 touching = false
-                invalidate(rectArr[rectIndex.first][rectIndex.second])
+                if(elementArr[rectIndex.first][rectIndex.second].matchFound)
+                    return true
+                if (!isMatch) {
+                    lastTouched = rectIndex
+                } else {
+                    elementArr[lastTouched.first][lastTouched.second].matchFound = true
+                    elementArr[rectIndex.first][rectIndex.second].matchFound = true
+                    lastTouched = Pair(-1, -1)
+                    isMatch = false
+                }
             }
             MotionEvent.ACTION_CANCEL -> {
 
@@ -168,6 +183,13 @@ class BoxView : View {
 
     }
 
+    private fun checkLastClicked(lastClick: Pair<Int, Int>, currentClick: Pair<Int, Int>) {
+        if ((lastClick.first != currentClick.first || lastClick.second != currentClick.second) && elementArr[lastClick.first][lastClick.second].image != elementArr[currentClick.first][currentClick.second].image) {
+            elementArr[lastClick.first][lastClick.second].flipped = false
+        } else {
+            isMatch = true
+        }
+    }
 
 
     private fun assignImages(row: Int, col: Int, elmentArr: Array<Array<Elements>>) {
@@ -190,14 +212,14 @@ class BoxView : View {
 
     }
 
-    private fun getClickedRectangle(x:Float,y:Float):Pair<Int,Int>{
+    private fun getClickedRectangle(x: Float, y: Float): Pair<Int, Int> {
         rectArr.forEachIndexed { i, arrayOfRects ->
-            for((j,rect) in arrayOfRects.withIndex()){
-                if(rect.contains(x.toInt(),y.toInt()))
-                    return Pair(i,j)
+            for ((j, rect) in arrayOfRects.withIndex()) {
+                if (rect.contains(x.toInt(), y.toInt()))
+                    return Pair(i, j)
             }
         }
-        return Pair(-1,-1)
+        return Pair(-1, -1)
     }
 
 
@@ -233,12 +255,17 @@ class BoxView : View {
         for (i in 0 until row.toInt()) {
             x = 0F
             for (j in 0 until col.toInt()) {
-                val d = ContextCompat.getDrawable(context,elementArr[i][j].image)
-                d?.setBounds(rectArr[i][j].left+12, rectArr[i][j].top+12, rectArr[i][j].right-12, rectArr[i][j].bottom-12)
+                val d = ContextCompat.getDrawable(context, elementArr[i][j].image)
+                d?.setBounds(
+                    rectArr[i][j].left + 12,
+                    rectArr[i][j].top + 12,
+                    rectArr[i][j].right - 12,
+                    rectArr[i][j].bottom - 12
+                )
                 d?.draw(canvas)
-                if(touching && rectIndex.first == i && rectIndex.second == j) {
+                if (elementArr[i][j].flipped || (elementArr[rectIndex.first][rectIndex.second].flipped && rectIndex.first == i && rectIndex.second == j)) {
                     canvas?.drawRect(x, y, x + rowWidth.toFloat(), y + colHeight.toFloat(), highLightPaint)
-                }else{
+                } else {
                     canvas?.drawRect(x, y, x + rowWidth.toFloat(), y + colHeight.toFloat(), paint)
                 }
                 canvas?.drawRect(x, y, x + rowWidth.toFloat(), y + colHeight.toFloat(), strokePaint)
@@ -263,7 +290,7 @@ class BoxView : View {
 
     }
 
-    data class Elements(val image: Int = -1, val flipped: Boolean = false)
+    data class Elements(var image: Int = -1, var flipped: Boolean = false,var matchFound:Boolean = false)
 
 
 }
