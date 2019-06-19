@@ -144,7 +144,9 @@ class BoxView : View {
         val y = event.y
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                rectIndex = getClickedRectangle(x, y)
+                rectIndex = getClickedRectangle(x, y)//todo add check for negative causing **CRASH**
+                if (rectIndex.first == -1 && rectIndex.second == -1)
+                    return true
                 touching = true
                 elementArr[rectIndex.first][rectIndex.second].flipped = true
                 if ((lastTouched.first != -1 && lastTouched.second != -1) && !(lastTouched.first == rectIndex.first && lastTouched.second == rectIndex.second) && !(elementArr[rectIndex.first][rectIndex.second].matchFound))
@@ -155,8 +157,10 @@ class BoxView : View {
 
             }
             MotionEvent.ACTION_UP -> {
+                if (rectIndex.first == -1 && rectIndex.second == -1)
+                    return true
                 touching = false
-                if(elementArr[rectIndex.first][rectIndex.second].matchFound)
+                if (elementArr[rectIndex.first][rectIndex.second].matchFound)
                     return true
                 if (!isMatch) {
                     lastTouched = rectIndex
@@ -290,7 +294,7 @@ class BoxView : View {
 
     }
 
-    data class Elements(var image: Int = -1, var flipped: Boolean = false,var matchFound:Boolean = false)
+    data class Elements(var image: Int = -1, var flipped: Boolean = false, var matchFound: Boolean = false)
 
 
 }
