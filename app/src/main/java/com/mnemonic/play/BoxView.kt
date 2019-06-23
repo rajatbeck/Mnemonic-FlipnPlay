@@ -32,7 +32,9 @@ class BoxView : View {
     var touching: Boolean = false
     var lastTouched: Pair<Int, Int> = Pair(-1, -1)
     var isMatch = false
-    var sameClick = false
+    var flippedcount = 0
+    var enable: Boolean = false
+    lateinit var mListener: OnGameCompleteListener
 
 
     private var imageList: List<Int> = arrayListOf(
@@ -93,6 +95,10 @@ class BoxView : View {
         initView(attrs)
     }
 
+    fun setOnGameCompleteListener(gameCompleteListener: OnGameCompleteListener) {
+        mListener = gameCompleteListener
+    }
+
 
     private fun initView(attrs: AttributeSet?) {
 
@@ -121,6 +127,39 @@ class BoxView : View {
         ta.recycle()
     }
 
+
+    fun resetTheValues(level: String) {
+        when (level) {
+            "easy" -> {
+                row = 2
+                col = 2
+            }
+            "medium" -> {
+                row = 4
+                col = 4
+            }
+            else -> {
+                row = 6
+                col = 6
+            }
+        }
+        rectArr = Array(row.toInt()) { Array(col.toInt()) { Rect() } }
+        elementArr = Array(row.toInt()) { Array(col.toInt()) { Elements() } }
+        imageList = imageList.shuffled()
+        rectIndex = Pair(0, 0)
+        touching = false
+        lastTouched = Pair(-1, -1)
+        isMatch = false
+        flippedcount = 0
+        enable = false
+        val rowWidth = width / row.toInt()
+        val colHeight = height / col.toInt()
+        assignImages(row.toInt(), col.toInt(), elementArr)
+        captureRect(rowWidth, colHeight, rectArr, _captureRect)
+        requestLayout()
+        invalidate()
+    }
+
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         val rowWidth = width / row.toInt()
@@ -140,11 +179,12 @@ class BoxView : View {
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
+        if (!enable) return true
         val x = event.x
         val y = event.y
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                rectIndex = getClickedRectangle(x, y)//todo add check for negative causing **CRASH**
+                rectIndex = getClickedRectangle(x, y)
                 if (rectIndex.first == -1 && rectIndex.second == -1)
                     return true
                 touching = true
@@ -191,6 +231,10 @@ class BoxView : View {
         if ((lastClick.first != currentClick.first || lastClick.second != currentClick.second) && elementArr[lastClick.first][lastClick.second].image != elementArr[currentClick.first][currentClick.second].image) {
             elementArr[lastClick.first][lastClick.second].flipped = false
         } else {
+            flippedcount += 2
+            if (flippedcount == (row.toInt() * col.toInt()))
+                mListener.onCompleted()
+
             isMatch = true
         }
     }
@@ -295,6 +339,11 @@ class BoxView : View {
     }
 
     data class Elements(var image: Int = -1, var flipped: Boolean = false, var matchFound: Boolean = false)
+
+    interface OnGameCompleteListener {
+
+        fun onCompleted()
+    }
 
 
 }
