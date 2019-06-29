@@ -3,7 +3,10 @@ package com.mnemonic.play
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
+import android.view.Menu
+import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.TickerMode
@@ -14,6 +17,7 @@ import kotlin.coroutines.CoroutineContext
 class MainActivity : AppCompatActivity() {
 
 
+    @UseExperimental(ObsoleteCoroutinesApi::class)
     private var tickerChannel = ticker(1000, 0, mode = TickerMode.FIXED_PERIOD)
     lateinit var dialog: AlertDialog.Builder
     var seconds = -1
@@ -46,13 +50,14 @@ class MainActivity : AppCompatActivity() {
         boxView.setOnGameCompleteListener(object : BoxView.OnGameCompleteListener {
             override fun onCompleted() {
                 tickerChannel.cancel()
+                timerBtn.text = "Start"
                 tickerChannel = ticker(1000, 0, mode = TickerMode.FIXED_PERIOD)
                 dialog.setTitle("Congratulations")
-                if (seconds < 10) dialog.setMessage("You have passed the test in ${minutes}:0${seconds}")
+                dialog.setCancelable(false)
+                if (seconds < 10) dialog.setMessage("You have completed the game in ${minutes}:0${seconds}")
                 else dialog.setMessage("You have passed the test in ${minutes}:${seconds}")
                 dialog.setPositiveButton("Play again") { _, _ ->
                     run {
-                        timerBtn.text = "Start"
                         seconds = -1
                         minutes = 0
                         boxView.resetTheValues(level)
@@ -63,6 +68,29 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+    }
+
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.home_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.reset -> {
+                if (boxView.enable) {
+                    tickerChannel.cancel()
+                    timerBtn.text = "Start"
+                    tickerChannel = ticker(1000, 0, mode = TickerMode.FIXED_PERIOD)
+                    seconds = -1
+                    minutes = 0
+                    boxView.resetTheValues(level)
+                }
+            }
+        }
+
+        return super.onOptionsItemSelected(item)
     }
 
     fun setDifficulty(selection: String) {

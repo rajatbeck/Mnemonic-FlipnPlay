@@ -1,19 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                             xmlns:app="http://schemas.android.com/apk/res-auto"
                                              android:layout_width="match_parent"
                                              android:layout_height="wrap_content"
-                                             xmlns:app="http://schemas.android.com/apk/res-auto">
+
+>
+
+    <TextView
+            app:layout_constraintTop_toTopOf="parent"
+            android:id="@+id/tvHeader"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Select Level"
+            android:maxLines="1"
+            style="@style/TextAppearance.AppCompat.Headline"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/btnEasy"
+            android:gravity="center_horizontal"
+            android:paddingVertical="8dp"
+    />
 
     <Button
             android:id="@+id/btnEasy"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvHeader"
             app:layout_constraintBottom_toTopOf="@+id/btnMedium"
-            android:layout_width="wrap_content" android:layout_height="wrap_content"
-          android:text="EASY"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Easy"
+            android:textAllCaps="false"
             android:layout_marginHorizontal="16dp"
-            style="@style/Widget.AppCompat.Button"
+            style="@style/Widget.AppCompat.Button.Borderless"
     />
 
     <Button
@@ -22,21 +41,25 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/btnEasy"
             app:layout_constraintBottom_toTopOf="@id/btnHard"
-            android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:text="MEDIUM"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Medium"
+            android:textAllCaps="false"
             android:layout_marginHorizontal="16dp"
-            style="@style/Widget.AppCompat.Button"
+            style="@style/Widget.AppCompat.Button.Borderless"
     />
     <Button
             android:id="@+id/btnHard"
             app:layout_constraintTop_toBottomOf="@+id/btnMedium"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-
-            android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:text="HARD"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Hard"
+            android:textAllCaps="false"
             android:layout_marginHorizontal="16dp"
-            style="@style/Widget.AppCompat.Button"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_marginBottom="8dp"
     />
 
 </android.support.constraint.ConstraintLayout>
