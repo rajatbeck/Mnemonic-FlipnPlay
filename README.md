@@ -12,7 +12,7 @@ Also there is a timer running which runs and logs the time you taken to pass the
 
 You can restart the game at any point of time.
 
-![alt text](https://github.com/rajatbeck/Mnemonic/screenshots/WhatsApp%20Image%202019-07-01%20at%2018.56.55.jpeg)
+![alt text](https://github.com/rajatbeck/Mnemonic/blob/master/screenshots/WhatsApp%20Image%202019-07-01%20at%2018.56.55.jpeg)
 
 
 
