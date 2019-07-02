@@ -6,6 +6,6 @@ There are different levels of difficulty: Easy, Medium and hard.
 Also there is a timer running which runs and logs the time you taken to pass the game. 
 You can restart the game at any point of time.
 
- col 1      | col 2      | col 3       |  col4    |   
+ preview 1      | preview 2      | preview 3       |  preview 4    |   
 |------------|-------------|-------------|-----------| 
 |  <img src="https://github.com/rajatbeck/Mnemonic/blob/master/screenshots/WhatsApp%20Image%202019-07-01%20at%2018.56.56.jpeg" width="250"> |  <img src="https://github.com/rajatbeck/Mnemonic/blob/master/screenshots/WhatsApp%20Image%202019-07-01%20at%2018.56.57.jpeg" width="250"> | <img src="https://github.com/rajatbeck/Mnemonic/blob/master/screenshots/WhatsApp%20Image%202019-07-01%20at%2018.56.55.jpeg" width="250">  | <img src="https://github.com/rajatbeck/Mnemonic/blob/master/screenshots/WhatsApp%20Image%202019-07-01%20at%2018.56.58.jpeg" width="250"> |
