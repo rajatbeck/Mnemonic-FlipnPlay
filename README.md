@@ -1,4 +1,4 @@
-# Mnemonic
+# Mnemonic(Flip n Play)
 Flip and Play memorising game with different levels of difficulty
 
 This is a simple flip and play game, which helps you to evaluate your memory.
