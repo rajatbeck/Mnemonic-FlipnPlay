@@ -1,4 +1,4 @@
-# Mnemonic(Flip n Play)
+# Mnemonic(Flip n Play)<img src="https://github.com/rajatbeck/Mnemonic-FlipnPlay/blob/master/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png" width="30">
 Flip and Play memorising game with different levels of difficulty
 
 This is a simple flip and play game, which helps you to evaluate your memory.
