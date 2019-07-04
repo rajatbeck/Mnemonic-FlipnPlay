@@ -242,15 +242,20 @@ class BoxView : View {
 
     private fun assignImages(row: Int, col: Int, elmentArr: Array<Array<Elements>>) {
         val n = (row * col) / 2
+        imageList = imageList.shuffled()
         var pickedImageListOne = imageList.filterIndexed { index, i -> index < n }
         var pickedImageListTwo = imageList.filterIndexed { index, i -> index < n }
+        pickedImageListTwo = pickedImageListTwo.shuffled()
+        var tickTock = true
         for (i in 0 until row) {
             for (j in 0 until col) {
-                if (pickedImageListOne.isNotEmpty()) {
+                if (tickTock) {
+                    tickTock = false
                     elementArr[i][j] = Elements(pickedImageListOne[0], false)
                     pickedImageListOne = pickedImageListOne.filterIndexed { index, _ -> index != 0 }
                     pickedImageListOne = pickedImageListOne.shuffled()
                 } else {
+                    tickTock = true
                     elementArr[i][j] = Elements(pickedImageListTwo[0], false)
                     pickedImageListTwo = pickedImageListTwo.filterIndexed { index, _ -> index != 0 }
                     pickedImageListTwo = pickedImageListTwo.shuffled()
